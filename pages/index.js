@@ -1,5 +1,5 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components'
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import appConfig from '../config.json';
 
@@ -35,8 +35,9 @@ function Title(props) {
 //export default HomePage
 
 export default function PaginaInicial() {
-    const [username, setUsername] = React.useState('omariosouto');
+    const [username, setUsername] = React.useState('PauloBarboza93');
     const roteamento = useRouter();
+    const [isDisabled, setIsDisabled] = useState(false);
 
     return (
         <>
@@ -66,7 +67,7 @@ export default function PaginaInicial() {
                     {/* Formulário */}
                     <Box
                         as="form"
-                        onSubmit={ function (infosDoEvento) {
+                        onSubmit={function (infosDoEvento) {
                             infosDoEvento.preventDefault();
                             console.log('Alguém submeteu o form')
                             roteamento.push('/chat');
@@ -84,13 +85,18 @@ export default function PaginaInicial() {
 
                         <TextField
                             value={username}
-                            onChange={ function (event) {
+                            onChange={function (event) {
                                 console.log('usuario digitou', event.target.value)
                                 // Onde está o valor?
-                                const valor =event.target.value;
+                                const value = event.target.value;
                                 //Trocar o valor da variavel
                                 // atrásvés do React e avise quem precisa
-                                setUsername(valor);
+                                setUsername(value);
+                                if (value.length < 3) {
+                                    setIsDisabled(true);
+                                } else {
+                                    setIsDisabled(false);
+                                }
                             }}
                             fullWidth
                             textFieldColors={{
@@ -112,6 +118,7 @@ export default function PaginaInicial() {
                                 mainColorLight: appConfig.theme.colors.primary[400],
                                 mainColorStrong: appConfig.theme.colors.primary[600],
                             }}
+                            disabled={isDisabled}
                         />
                     </Box>
                     {/* Formulário */}
@@ -133,24 +140,46 @@ export default function PaginaInicial() {
                             minHeight: '240px',
                         }}
                     >
-                        <Image
-                            styleSheet={{
-                                borderRadius: '50%',
-                                marginBottom: '16px',
-                            }}
-                            src={`https://github.com/${username}.png`}
-                        />
-                        <Text
-                            variant="body4"
-                            styleSheet={{
-                                color: appConfig.theme.colors.neutrals[200],
-                                backgroundColor: appConfig.theme.colors.neutrals[900],
-                                padding: '3px 10px',
-                                borderRadius: '1000px'
-                            }}
-                        >
-                            {username}
-                        </Text>
+                        {function () {
+                            if (username.length > 2) {
+                                return (
+                                    <>
+                                        <Image
+                                            styleSheet={{
+                                                borderRadius: '50%',
+                                                marginBottom: '16px',
+                                            }}
+                                            src={`https://github.com/${username}.png`}
+                                        />
+                                        <Text
+                                            variant="body4"
+                                            styleSheet={{
+                                                color: appConfig.theme.colors.neutrals[200],
+                                                backgroundColor: appConfig.theme.colors.neutrals[900],
+                                                padding: '3px 10px',
+                                                borderRadius: '1000px'
+                                            }}
+                                        >
+                                            {username}
+                                        </Text>
+                                    </>
+                                )
+
+                            } else {
+                                return (
+
+                                    <Image
+                                        styleSheet={{
+                                            borderRadius: '50%',
+                                            marginBottom: '16px',
+                                        }}
+                                        src={'/unknown_user.svg'}
+                                    />
+
+                                )
+                            }
+
+                        }()}
                     </Box>
                     {/* Photo Area */}
                 </Box>
